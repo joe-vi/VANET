@@ -1,8 +1,9 @@
-package vanet;
+//package vanet;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
@@ -88,6 +89,8 @@ class packet{
 		return delay;
 	}
 
+	//static int sent_count=0;
+
 	public int get_vehicle_id(){
 		return veh_id;
 	}
@@ -142,12 +145,17 @@ class packet{
 }
 
 
-public class XmlReadd {
+public class XmlRead {
 
 	static int[] event_byte_size = {100,200,300,400};
+
 	static int[] difs = {2,3,6,9};
+
+
+
 	static double t_put = 0;
 	static double delay = 0;
+
 	static int total_number_groups = 0;
 	static double pckt_dlvr_ratio = 0;
 	static double bytes_delivered = 0;
@@ -155,7 +163,9 @@ public class XmlReadd {
 	static double sent_pckts = 0;
 	static double drop_pckts = 0;
 	static double total_delay = 0;
+
 	static double time_st = 0;
+
 	static int episodes = 1000;
 	static int total_number_of_vehicles = 100;
 	static int simulation_time = 500;
@@ -169,8 +179,14 @@ public class XmlReadd {
 		 total_pckts = 0;
 		 sent_pckts = 0;
 		 drop_pckts = 0;
+		 //total_number_groups = 0;
 		 total_delay = 0;
 		 delay = 0;
+		 //full_details.clear();
+		// avg_group = 0;
+		// avg_thruput = 0;
+		// avg_ratio = 0;
+		// avg_delay = 0;
 
 	}
 	public static void episode_reset() {
@@ -180,6 +196,7 @@ public class XmlReadd {
 		episode_tot_group=0;
 		total_number_groups = 0;
 		full_details.clear();
+		//temp_list.clear();
 	}
 
 	static ArrayList<ArrayList<vehicle>> full_details = new ArrayList<ArrayList<vehicle>>();
@@ -192,6 +209,10 @@ public class XmlReadd {
 	static double avg_thruput = 0;
 	static double avg_ratio = 0;
 	static double avg_delay = 0;
+
+
+
+
 
 	public static void main(String args[]) {
 		try {
@@ -208,6 +229,7 @@ public class XmlReadd {
 
 		for(;total_number_of_vehicles<=200;total_number_of_vehicles+=10) {
 			episode_reset();
+			//System.out.println(full_details.size());
 			try {
 				File file = new File("trace.xml");
 				DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -232,6 +254,9 @@ public class XmlReadd {
 					seconds_groups.add(groups_per_second(i));
 				}
 			}
+			//System.out.println("NUmber of vehicles: " + total_number_of_vehicles);
+			//System.out.println(total_number_groups);
+
 
 			for(int q=0;q<episodes;q++) {
 				System.out.println("[+]Running Simulation : "+(q+1));
@@ -248,6 +273,7 @@ public class XmlReadd {
 				System.out.println("\n\t Total number of pakcets: "+total_pckts);
 				System.out.println("\n\t Total number of DROPPED pakcets: "+drop_pckts);
 				System.out.println("\n\t Total number of SENT pakcets: "+sent_pckts);
+				//System.out.println("\n\t Total bytes delivered : "+bytes_delivered);
 				System.out.println("\n**************************************");
 			}
 
@@ -276,6 +302,7 @@ public class XmlReadd {
 		FileWriter fileWriter = new FileWriter("output.csv",true);
 	    fileWriter.append(fileContent);
 	    fileWriter.append("\n");
+	    //fileWriter.write(fileContent);
 	    fileWriter.close();
 	}
 
@@ -417,11 +444,19 @@ public class XmlReadd {
 
 
 
+
 	static ArrayList<ArrayList<vehicle>> groups_per_second(int req_second){
+		//transmit();
 		ArrayList<vehicle> list_vehicles_second = new ArrayList<vehicle>();
 		vehicle car = new vehicle();
+
 		ArrayList<ArrayList<vehicle>> result_groups = new ArrayList<ArrayList<vehicle>>();
+		//ArrayList<vehicle> group_of_vehicle = new ArrayList<vehicle>();
+
+
 		double current_pos_x, current_pos_y;
+		//range_radius is used for setting the maximum range possible
+		//	double range_radius = 300.0;
 		double distance;
 		int i,j;
 		int count_vehicles_timestamp;
@@ -459,11 +494,13 @@ public class XmlReadd {
 		ArrayList<vehicle> list_vehicles_second = new ArrayList<vehicle>();
 		vehicle car = new vehicle();
 		ArrayList<ArrayList<vehicle>> result_groups = new ArrayList<ArrayList<vehicle>>();
+		//what is the need of group_of_vehicle
+		ArrayList<vehicle> group_of_vehicle = new ArrayList<vehicle>();
 		double current_pos_x, current_pos_y;
 		double distance;
-		int i,j;
+		int i,j,k;
 		int count_vehicles_timestamp;
-
+		//double range_radius = 300.0;
 		list_vehicles_second = full_details.get(req_second);
 		count_vehicles_timestamp = list_vehicles_second.size();
 
@@ -487,6 +524,11 @@ public class XmlReadd {
 			}
 
 			if(check_for_repeat(result_groups,temp_group_of_vehicle) == -1){
+
+				//what is the need for this loop
+				for(j=0;j<temp_group_of_vehicle.size();j++){
+					vehicle veh= temp_group_of_vehicle.get(j);
+				}
 				int tttt = check_for_repeat(main_list,temp_group_of_vehicle);
 				if(tttt == -1){
 					result_groups.add(temp_group_of_vehicle);
@@ -533,9 +575,11 @@ public class XmlReadd {
 
 
 	static void check_to_send(ArrayList<ArrayList<ArrayList<vehicle>>> main_list, ArrayList<packet> que, int time){
-		int i,j;
+		int i,j,k;
+		//ArrayList<Integer> pos = new ArrayList<Integer>();
 		int num_packet_to_send = 0;
 		int num_groups_present = 0;
+		ArrayList<ArrayList<vehicle>> list = new ArrayList<ArrayList<vehicle>>();
 
 		packet p = que.get(0);
 		i=0;
@@ -646,6 +690,7 @@ public class XmlReadd {
 		packet temp_p;
 		int i=0,j,k,m;
 		int fl = 0;
+		Random rand = new Random();
 		ArrayList<Integer> drop_list = new ArrayList<Integer>();
 		ArrayList<Integer> switch_list = new ArrayList<Integer>();
 		ArrayList<Integer> collision_packets = new ArrayList<Integer>();
@@ -707,6 +752,8 @@ public class XmlReadd {
 				break;
 			}
 		}
+
+		//System.out.println("HEllo");
 		for(i=0;i<collision_packets.size();i++){
 			int t = que.get(collision_packets.get(i)).set_tries();
 			if(t == -1){
@@ -722,6 +769,9 @@ public class XmlReadd {
 				p = new packet();
 				que.get(collision_packets.get(i)).dec_time_to_live();
 				temp_p = que.get(collision_packets.get(i));
+				//ArrayList<vehicle> list = main_list.get(temp_p.get_orig_sec()).get(temp_p.get_group_num().get(0));
+				//t = check_if_present(temp_p.get_vehicle_id(),list);
+				//vehicle veh = main_list.get(temp_p.get_orig_sec()).get(temp_p.get_group_num().get(0)).get(t);
 				p.set_time_to_live(difs[temp_p.get_event()-1] + ((int)(Math.random() * 10) + 1));
 				p.set_vehicle_id(temp_p.get_vehicle_id());
 				p.set_event(temp_p.get_event());
@@ -817,9 +867,11 @@ public class XmlReadd {
 	static void network_implement(ArrayList<ArrayList<ArrayList<vehicle>>> main_list){
 		ArrayList<packet> que = new ArrayList<packet>();
 		int i,j,k,m;
+		int num_packet_to_send;
 		for(i=0;i<simulation_time;i++){
 			System.out.println("*******************************************");
 			System.out.println("At time = " + i);
+			num_packet_to_send = 0;
 			// checking to send packets
 			if(que.size()>0){
 				j=0;
@@ -853,7 +905,13 @@ public class XmlReadd {
 					}
 				}
 			}
-
+			/*
+			System.out.println("\n\n Packets: ");
+			for(j=0;j<que.size();j++){
+				System.out.println((j+1) + ". Packet ID: " + que.get(j).get_pack_id() + " \tVehicle ID: " + que.get(j).get_vehicle_id() + "\tTime To Live: " + que.get(j).get_time_to_live() + " \tOrigin Time: " + que.get(j).get_orig_sec() + "\t Tries: " + que.get(j).get_tries() + "\tGroup: " + que.get(j).get_group_num());
+			}
+			System.out.println("*******************************************");
+			*/
 		}
 		total_pckts = total_pckts - que.size();
 	}
