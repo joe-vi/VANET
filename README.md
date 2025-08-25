@@ -128,7 +128,6 @@ This project investigates the implementation and performance evaluation of Mediu
 - [OpenStreetMap](https://www.openstreetmap.org/#map=4/21.84/82.79)
 - [SUMO Tutorials](https://sumo.dlr.de/docs/Tutorials.html)
 - Related research papers on VANET MAC protocols.
-
 ---
 
 **Thank you for exploring this VANET MAC protocol research project!**
